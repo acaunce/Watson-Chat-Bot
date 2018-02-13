@@ -20,7 +20,8 @@ var ConversationPanel = (function() {
   // Publicly accessible methods defined
   return {
     init: init,
-    inputKeyDown: inputKeyDown
+    inputKeyDown: inputKeyDown,
+    startMic: startMic
   };
 
   // Initialize the module
@@ -184,6 +185,30 @@ var ConversationPanel = (function() {
           }]
         };
         messageArray.push(Common.buildDomElement(messageJson));
+        if(isUser) return;
+        if(!authToken)
+        {
+
+          fetch('/api/tts-token')
+          .then(res =>{
+            console.log(res);
+            return res.text();
+          })
+          .then(token=>{
+            authToken = token;
+            WatsonSpeech.TextToSpeech.synthesize({
+              text: currentText,
+              token: authToken
+          });
+        });
+        }
+        else{
+          WatsonSpeech.TextToSpeech.synthesize({
+            text: currentText,
+            token: authToken
+        });
+        }
+
       }
     });
 
@@ -224,5 +249,32 @@ var ConversationPanel = (function() {
       inputBox.value = '';
       Common.fireEvent(inputBox, 'input');
     }
+  }
+  var micOn = false;
+  var stream;
+  var authToken;
+  function startMic(){
+    if(micOn){
+
+      this.inputKeyDown({keyCode: 13}, document.getElementById('textInput'));
+      stream.stop();
+      micOn = false;
+      startMic();
+
+    } else {
+    fetch('/api/speech-token')
+    .then(res =>{
+      console.log(res);
+      return res.text();
+    })
+    .then(token=>{
+      authToken = token;
+      stream = WatsonSpeech.SpeechToText.recognizeMicrophone({
+        token: token,
+        outputElement: '#textInput'
+      });
+      micOn = true;
+    });
+  }
   }
 }());

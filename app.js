@@ -19,11 +19,22 @@
 var express = require('express'); // app server
 var bodyParser = require('body-parser'); // parser for post requests
 var Conversation = require('watson-developer-cloud/conversation/v1'); // watson sdk
-
+const SpeechToText = require('watson-developer-cloud/speech-to-text/v1');
+var watson = require('watson-developer-cloud');
+const stt = new watson.SpeechToTextV1({
+  // if left undefined, username and password to fall back to the SPEECH_TO_TEXT_USERNAME and
+  // SPEECH_TO_TEXT_PASSWORD environment properties, and then to VCAP_SERVICES (on Bluemix)
+  // username: '',
+  // password: ''
+});
+const authService = new watson.AuthorizationV1(stt.getCredentials());
+const tts = new watson.TextToSpeechV1({});
+const ttsAuth = new watson.AuthorizationV1(tts.getCredentials());
 var app = express();
 
 // Bootstrap application settings
 app.use(express.static('./public')); // load UI from public folder
+app.use(express.static('./node_modules'));
 app.use(bodyParser.json());
 
 // Create the service wrapper
@@ -34,6 +45,26 @@ var conversation = new Conversation({
   //'password': process.env.CONVERSATION_PASSWORD,
   'version_date': '2017-05-26'
 });
+
+
+app.get('/api/speech-token', (req, res, next) => {
+  authService.getToken((err, token) => {
+    if (err) {
+      next(err);
+    } else {
+      res.send(token);
+    }
+  });
+});
+app.get('/api/tts-token', (req, res, next)=>{
+  ttsAuth.getToken((err, token)=>{
+  if(err) next(err);
+  else{
+    res.send(token);
+  }}
+
+);
+})
 
 // Endpoint to be call from the client side
 app.post('/api/message', function(req, res) {

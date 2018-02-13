@@ -23,6 +23,7 @@
           <input id="textInput" class="input responsive-column"
             placeholder="Type something" type="text"
             onkeydown="ConversationPanel.inputKeyDown(event, this)">
+            <button onclick="ConversationPanel.startMic()">Speak</button>
         </label>
       </div>
     </div>
@@ -34,7 +35,7 @@
       <div id="payload-response" class="payload"></div>
     </div>
   </div>
-
+  <script src="watson-speech/dist/watson-speech.min.js"></script>
   <script src="js/common.js"></script>
   <script src="js/api.js"></script>
   <script src="js/conversation.js"></script>
