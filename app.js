@@ -68,6 +68,11 @@ app.post('/api/message', function(req, res) {
  */
 function updateMessage(input, response) {
   var responseText = null;
+  console.log(response.context);
+  let ctx = response.context;
+  if (ctx.done){
+    response.output.text = `I am going to log a ${ctx.EventType}, that happened on ${ctx.date} at ${ctx.time} at ${ctx.Site}.`;
+  }
   if (!response.output) {
     response.output = {};
   } else {
@@ -89,6 +94,8 @@ function updateMessage(input, response) {
     }
   }
   response.output.text = responseText;
+
+
   return response;
 }
 
