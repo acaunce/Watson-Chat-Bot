@@ -102,7 +102,7 @@ function updateMessage(input, response) {
   console.log(response.context);
   let ctx = response.context;
   if (ctx.done){
-    response.output.text = `I am going to log a ${ctx.EventType}, that happened on ${ctx.date} at ${ctx.time} at ${ctx.Site}.`;
+    response.output.text = `I am going to log a ${ctx.EventType}, that happened on ${ctx.EventDate} at ${ctx.EventTime} at ${ctx.EventSite}.`;
   }
   if (!response.output) {
     response.output = {};

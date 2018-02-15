@@ -259,7 +259,7 @@ var ConversationPanel = (function() {
       this.inputKeyDown({keyCode: 13}, document.getElementById('textInput'));
       stream.stop();
       micOn = false;
-      startMic();
+      //startMic();
 
     } else {
     fetch('/api/speech-token')
